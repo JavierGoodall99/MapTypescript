@@ -1,0 +1,147 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #root {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1em;
+    font-family: sans-serif;
+    color: #333;
+  }
+  
+  /* height of the container */
+  .leaflet-container {
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .cluster-icon {
+    background-color: #333;
+    height: 2em;
+    width: 2em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    box-shadow: 0 0 0px 5px #fff;
+  }
+
+
+/* styles.css */
+
+/* Customize the marker icon image */
+.leaflet-marker-icon {
+  background-image: url('./icons/placeholder.png');
+  background-size: cover;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer; /* Optional: Add a pointer cursor when hovering over the marker */
+}
+
+/* Optional: Style the search input field */
+.leaflet-control-geosearch input[type="text"] {
+  width: 500px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
+  border: 2px solid rgba(0,0,0,0.2);
+  background-clip: padding-box;
+  background-color: white;
+}
+
+/* Optional: Style the search input button */
+.leaflet-control-geosearch input[type="submit"] {
+  display: none; /* Hide the submit button if you don't need it */
+}
+
+
+
+.side-list {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  max-width: 500px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.location-content {
+  flex: 1;
+}
+
+.location-image {
+  width: 200px;
+  height: 100px;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+/*  Layout */
+.container {
+    display: flex;
+    height: 100vh; 
+    width: 100%;
+  }
+  
+  .side-left {
+    flex: 0 0 20%;
+    background-color: #ffffff;
+    padding: 50px;
+  }
+  
+  .side-right {
+    flex: 1;
+  }
+  
+  .map-container {
+    height: 100%;
+  }
+  
+
+/* Filter */
+.marker-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  margin-right: 10px;
+}
+
+.marker-select {
+  display: none; /* Hide the select dropdown since we are using checkboxes */
+}
+
+/* Custom styles for the checkboxes */
+.filter-label input[type="checkbox"] {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+
