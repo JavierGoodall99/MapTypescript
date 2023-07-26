@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L, { Icon, point, PointTuple } from "leaflet";
 import CategoryFilter from "./CategoryFilter";
+import { SearchBox } from '@fluentui/react-search-preview';
+import { Field, FluentProvider, webLightTheme,  } from "@fluentui/react-components";
 
 
 
@@ -117,16 +119,9 @@ export default function App() {
       </div>
       <div className="side-right">
     <MapContainer className="map-container" center={[-33.923333, 18.422222]} zoom={13}>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {/* WATERCOLOR CUSTOM TILES */}
-      {/* <TileLayer
-        attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg"
-      /> */}
-      {/* GOOGLE MAPS TILES */}
+      <FluentProvider theme={webLightTheme}>
+      <SearchBox className="search" placeholder="Zoeken" size="medium" />
+    </FluentProvider>
       <TileLayer
         attribution="Google Maps"
         url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" // regular

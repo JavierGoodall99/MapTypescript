@@ -69,6 +69,13 @@
   display: none; /* Hide the submit button if you don't need it */
 }
 
+.search{
+  z-index: 1000;
+  margin-left: 60px;
+  margin-top: 12px;
+  width: 350px;
+  color: #c11212;
+}
 
 
 .side-list {
