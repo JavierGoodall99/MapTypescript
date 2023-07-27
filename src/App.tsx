@@ -1,18 +1,28 @@
-import React, { useState } from "react";
-import "./styles.css";
+import React, { useEffect, useState } from 'react';
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
-import L, { Icon, point, PointTuple } from "leaflet";
-import CategoryFilter from "./CategoryFilter";
-import { SearchBox } from '@fluentui/react-search-preview';
-import { Field, FluentProvider, webLightTheme,  } from "@fluentui/react-components";
+import L, { Icon, PointTuple, point } from "leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import housesData from './houses.json'; // Import the JSON data instead of using axios
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import "./styles.css";
+import placeholderIcon from "./placeholder.png"; // Import the icon image
+import { Checkbox, FluentProvider, webLightTheme } from '@fluentui/react-components';
 
-
+interface House {
+  vge_id: number;
+  Lat: number;
+  Long: number;
+  Postcode: string;
+  Straat: string;
+  huisnummer: string;
+  naam: string | null;
+  geldig_vanaf: string | null;
+  wijk_code: string | null;
+}
 
 const customIcon = new Icon({
-  iconUrl: require("./icons/placeholder.png"),
-  iconSize: [65, 65] as PointTuple, // size of the icon
+  iconUrl: placeholderIcon,
+  iconSize: [65, 65] as PointTuple,
 });
 
 const createClusterCustomIcon = function (cluster: any) {
@@ -23,135 +33,66 @@ const createClusterCustomIcon = function (cluster: any) {
   });
 };
 
-interface MarkerInfo {
-  geocode: number[];
-  popUp: string;
-  img: string;
-  category: string;
-}
+const HouseMap: React.FC = () => {
+  const [houses, setHouses] = useState<House[]>([]);
+  const [selectedStraat, setSelectedStraat] = useState<string | null>(null);
 
-const markers: MarkerInfo[] = [
-  {
-    geocode: [-33.962864, 18.409834],
-    popUp: "Table Mountain",
-    img: "https://images.pexels.com/photos/4064211/pexels-photo-4064211.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    category: "Hiking Trails" 
-  },
-  {
-    geocode: [-33.906546, 18.419288],
-    popUp: "V&A Waterfront",
-    img: "https://daddysdeals.co.za/wp-content/uploads/2022/09/Cape-Wheel-12345678.jpg",
-    category: "Resturants"
-  },
-  {
-    geocode: [-33.950855, 18.378505],
-    popUp: "Camps Bay",
-    img: "https://www.intotours.co.za/media/cache/2b/f4/2bf49d6cc67bddcbc93c44570eca14d8.jpg",
-    category: "Resturants"
-  },
-  {
-    geocode: [-33.98721, 18.432312],
-    popUp: "Kirstenbosch National Botanical Garden",
-    img: "https://keyassets.timeincuk.net/inspirewp/live/wp-content/uploads/sites/8/2017/01/ERMHR7-e1553876093783.jpg",
-    category: "Hiking Trails" 
-  },
-  {
-    geocode: [-33.957652, 18.461199],
-    popUp: "University of Cape Town",
-    img: "https://cisp.cachefly.net/assets/articles/images/resized/0001056125_resized_uctuppercampuslandscapeview1022.jpg",
-    category: "Education & Schools"
-  }
-];
+  useEffect(() => {
+    // You can optionally fetch data from an API here, but for this example, we'll use the imported JSON data
+    setHouses(housesData as House[]); // Use type assertion here
+  }, []);
 
-interface LocationDetailsProps {
-  marker: MarkerInfo;
-}
+  const uniqueStraats = Array.from(new Set(houses.map((house) => house.Straat)));
 
-function LocationDetails({ marker }: LocationDetailsProps) {
-  return (
-    <div className="location-details">
-      {marker.img && (
-        <img src={marker.img} alt="Location" className="location-image" />
-      )}
-      <div className="location-content">
-        <h3>Location Details:</h3>
-        <p>Place: {marker.popUp}</p>
-        <p>Latitude: {marker.geocode[0]}</p>
-        <p>Longitude: {marker.geocode[1]}</p>
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
-  const [selectedMarker, setSelectedMarker] = useState<MarkerInfo | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
-
-  const filterOptions = [
-    { value: "all", label: "All" },
-    { value: "Hiking Trails", label: "Hiking Trails" },
-    { value: "Resturants", label: "Resturants" },
-    { value: "Education & Schools", label: "Education & Schools" },
-  ];
-
-  const handleMarkerClick = (marker: MarkerInfo) => {
-    setSelectedMarker(marker);
+  const handleStraatCheckboxChange = (straat: string) => {
+    setSelectedStraat(prevStraat => prevStraat === straat ? null : straat);
   };
 
-  const handleFilterChange = (filterValue: string) => {
-    setSelectedFilter(filterValue);
-  };
-
-  const filteredMarkers =
-    selectedFilter === "all"
-      ? markers
-      : markers.filter((marker) => marker.category === selectedFilter);
-
   return (
-    <div className="container">
-      {/* Left column */}
-      <div className="side-left">
-        <CategoryFilter
-          filterOptions={filterOptions}
-          selectedFilter={selectedFilter}
-          onFilterChange={handleFilterChange}
-        />
-      </div>
-      <div className="side-right">
-    <MapContainer className="map-container" center={[-33.923333, 18.422222]} zoom={13}>
+    <div className='mapping'>
       <FluentProvider theme={webLightTheme}>
-      <SearchBox className="search" placeholder="Zoeken" size="medium" />
-    </FluentProvider>
-      <TileLayer
-        attribution="Google Maps"
-        url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" // regular
-        // url="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}" // satellite
-        // url="http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}" // terrain
-        maxZoom={20}
-        subdomains={["mt0", "mt1", "mt2", "mt3"]}
-      />
-
-      <MarkerClusterGroup chunkedLoading iconCreateFunction={createClusterCustomIcon}>
-        {filteredMarkers.map((marker, index) => (
-          <Marker
-            key={index}
-            position={[...marker.geocode] as L.LatLngExpression}
-            icon={customIcon}
-            eventHandlers={{
-              click: () => handleMarkerClick(marker)
-            }}
-          >
-            <Popup>{marker.popUp}</Popup>
-          </Marker>
-        ))}
-      </MarkerClusterGroup>
-      {selectedMarker && (
-        <div className="side-list">
-          <LocationDetails marker={selectedMarker} />
-        </div>
-      )}
-    </MapContainer>
-    </div>
+      <h3>Filter by Straat:</h3>
+      {uniqueStraats.map((straat) => (
+        <label key={straat}>
+          <Checkbox
+            value={straat}
+            checked={selectedStraat === straat}
+            onChange={() => handleStraatCheckboxChange(straat)}
+          />
+          {straat}
+        </label>
+      ))}
+      </FluentProvider>
+      <MapContainer center={[52.35919189453125, 6.63872766494751]} zoom={13} style={{ height: '90vh' }}>
+        <TileLayer
+          attribution="Google Maps"
+          url="http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" // regular
+          // url="http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}" // satellite
+          // url="http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}" // terrain
+          maxZoom={20}
+          subdomains={["mt0", "mt1", "mt2", "mt3"]}
+        />
+        <MarkerClusterGroup chunkedLoading iconCreateFunction={createClusterCustomIcon}>
+          {houses.map((house) => {
+            if (selectedStraat && house.Straat !== selectedStraat) {
+              return null; // Skip rendering markers for non-selected Straats
+            }
+            return (
+              <Marker key={house.vge_id} position={[house.Lat, house.Long]} icon={customIcon}>
+                <Popup>
+                  <p>{house.Straat} {house.huisnummer}</p>
+                  {house.Postcode}
+                  {house.naam && <p>Name: {house.naam}</p>}
+                  {house.geldig_vanaf && <p>Valid from: {house.geldig_vanaf}</p>}
+                  {house.wijk_code && <p>Wijk Code: {house.wijk_code}</p>}
+                </Popup>
+              </Marker>
+            );
+          })}
+        </MarkerClusterGroup>
+      </MapContainer>
     </div>
   );
-}
+};
+
+export default HouseMap;
